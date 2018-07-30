@@ -127,8 +127,7 @@ public class VecaRect {
 		Selected.clear();
 	}
 
-	public synchronized void initArray(Integer noel, boolean isSorted,
-			boolean upSorted) {
+	public synchronized void initArray(Integer noel, boolean isSorted, boolean upSorted) {
 		/*
 		 * Функция инициализации массива. Принимает параметры: noel: количество
 		 * элементов в массиве isSorted: отсортирован ли массив upSorted:
@@ -165,7 +164,7 @@ public class VecaRect {
 			 * Если не сортировать, то добавляются случайные числа
 			 */
 			for (int i = 0; i < noel; i++) {
-				Numbers.add((int) ((double) Math.random() * (double) noel));
+				Numbers.add((int) (Math.random() * (double) noel));
 			}
 		}
 	}
@@ -268,18 +267,14 @@ public class VecaRect {
 			/*
 			 * Для каждого из прямоугольников делаем:
 			 */
-			Double BarHeight = (double) main.getHeight()
-					* (double) Numbers.get(i) / (double) Rects.size()
-					/ (double) NOS;
+			Double BarHeight = (double) main.getHeight() * (double) Numbers.get(i) / Rects.size() / (double) NOS;
 			/*
 			 * Вычисляем высоту прямоугольника
 			 */
-			Rects.get(i).setLocation(
-					(double) i * (double) main.getWidth()
-							/ (double) Rects.size(),
-					(double) main.getHeight()
-							* (double) ((double) NIQ + (double) 1)
-							/ (double) NOS - (double) BarHeight);
+			Rects
+					.get(i)
+					.setLocation((double) i * (double) main.getWidth() / Rects.size(),
+							main.getHeight() * ((double) NIQ + (double) 1) / (double) NOS - BarHeight);
 			/*
 			 * Устанавливаем положение прямоугольника: По X координате -
 			 * вычисляем какой это прямоугольник по порядку, умножаем порядковое
@@ -289,9 +284,7 @@ public class VecaRect {
 			 * По Y - умножаем высоту холста на порядковый номер массива (NIQ) и
 			 * делим на количество массивов. Вчитаем высоту прямоугольника
 			 */
-			Rects.get(i).setSize(
-					(double) main.getWidth() / (double) Rects.size(),
-					(double) BarHeight);
+			Rects.get(i).setSize((double) main.getWidth() / (double) Rects.size(), BarHeight);
 			/*
 			 * Устанавливаем ширину прямоугольника как ширину холста деленая на
 			 * количество прямоугольников, а высота уже пощитана - BarHeight
@@ -310,27 +303,23 @@ public class VecaRect {
 			 * Если размер надписи значения очень маленький, то мы его не
 			 * показываем
 			 */
-			if ((1.0 * main.getWidth() / Numbers.size() <= 10) || (Values.get(i)
-					.getHeight() > 1.0 * main.getHeight() / NOS)) {
+			if ((1.0 * main.getWidth() / Numbers.size() <= 10)
+					|| (Values.get(i).getHeight() > 1.0 * main.getHeight() / NOS)) {
 				Values.get(i).setVisible(false);
 			} else {
 				Values.get(i).setVisible(true);
 				Values.get(i).setLabel(Numbers.get(i).toString());
-				Values.get(i)
-						.setFont(
-								new Font("Sans-Serif", Font.PLAIN,
-										(int) ((double) main.getWidth()
-												/ (double) Numbers.size()
-												* 0.75)));
+				Values
+						.get(i)
+						.setFont(new Font("Sans-Serif", Font.PLAIN,
+								(int) ((double) main.getWidth() / (double) Numbers.size() * 0.75)));
 				if (!SortTime.isVisible())
 					Values.get(i).sendToFront();
 
-				Values.get(i).setLocation(
-						((double) i + 0.5) * (double) main.getWidth()
-								/ (double) Numbers.size()
-								- Values.get(i).getWidth() * 0.5,
-						(double) main.getHeight() / (double) NOS
-								* (double) (NIQ + 1));
+				Values
+						.get(i)
+						.setLocation((i + 0.5) * main.getWidth() / Numbers.size() - Values.get(i).getWidth() * 0.5,
+								(double) main.getHeight() / (double) NOS * (NIQ + 1));
 			}
 		}
 
@@ -338,19 +327,15 @@ public class VecaRect {
 		 * Если название сортировки не нулевое, то перемещаем в нужную позицию
 		 */
 		if (Name != null) {
-			Name.setLocation(0, (double) Name.getHeight()
-					+ (double) main.getHeight() / (double) NOS * (double) NIQ);
+			Name.setLocation(0, Name.getHeight() + (double) main.getHeight() / (double) NOS * (double) NIQ);
 		}
 		/*
 		 * Если время сортировки нужно показывать, то перемещаем его в нужную
 		 * позицию, задаем шрифт, и выбрасываем на передний план
 		 */
 		if (SortTime.isVisible()) {
-			SortTime.setFont(new Font("Serif", Font.BOLD | Font.ITALIC,
-					(int) (main.getHeight() / (double) NOS / 2.0)));
-			SortTime.setLocation(0,
-					main.getHeight() / (double) NOS * (NIQ + 0.5)
-							+ SortTime.getHeight() / 2.0);
+			SortTime.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, (int) (main.getHeight() / (double) NOS / 2.0)));
+			SortTime.setLocation(0, main.getHeight() / (double) NOS * (NIQ + 0.5) + SortTime.getHeight() / 2.0);
 			SortTime.sendToFront();
 		}
 		unlockUpdateRects();
@@ -392,7 +377,7 @@ public class VecaRect {
 				Values.get(index1).move((pos2 - pos1) / 100.0, (i - 50) / 50.0);
 				Rects.get(index2).move((pos1 - pos2) / 100.0, (50 - i) / 50.0);
 				Values.get(index2).move((pos1 - pos2) / 100.0, (50 - i) / 50.0);
-				main.pause(Main.PAUSETIME.getValue() / 60);
+				Main.pause(Main.PAUSETIME.getValue() / 60);
 			}
 		}
 		/*
@@ -407,19 +392,19 @@ public class VecaRect {
 		 */
 	}
 
-	public Vector<Integer> Numbers = new Vector<Integer>();
+	public Vector<Integer> Numbers = new Vector<>();
 	/*
 	 * Вектор из значений элементов
 	 */
-	public Vector<GRect> Rects = new Vector<GRect>();
+	public Vector<GRect> Rects = new Vector<>();
 	/*
 	 * Вектор из прямоугольников
 	 */
-	public Vector<GLabel> Values = new Vector<GLabel>();
+	public Vector<GLabel> Values = new Vector<>();
 	/*
 	 * Вектор из надписей значений
 	 */
-	public Vector<Integer> Selected = new Vector<Integer>();
+	public Vector<Integer> Selected = new Vector<>();
 	/*
 	 * Вектор из индексов элементов для выделения
 	 */
@@ -435,7 +420,7 @@ public class VecaRect {
 	/*
 	 * Статичная переменная, содержащая количество активных массивов(векторов)
 	 */
-	public static Vector<VecaRect> vecs = new Vector<VecaRect>();
+	public static Vector<VecaRect> vecs = new Vector<>();
 	private Main main;
 	/*
 	 * Переменная для хранения указателя на Main

@@ -8,7 +8,6 @@ package sort;
  * Импортируем нужные библиотеки
  */
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -32,7 +31,7 @@ import acm.program.GraphicsProgram;
  */
 public class Main extends GraphicsProgram {
 	/*
-	 * Описание класса Main. Этот класс расширяется классом GraphucsProgram, то
+	 * Описание класса Main. Этот класс расширяется классом GraphicsProgram, то
 	 * есть наследует от него все функции, переменные и константы. В итоге
 	 * приложение становится апплетом (как те, которые включают на
 	 * веб-страницы).
@@ -75,14 +74,7 @@ public class Main extends GraphicsProgram {
 
 	}
 
-	private void pause(final long time) {
-		try {
-			Thread.sleep(time);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
+	@Override
 	public void init() {
 		/*
 		 * Вторая в очереди запускаемая функция. Если быть точнее, то она
@@ -107,16 +99,14 @@ public class Main extends GraphicsProgram {
 		add(ArrSize, WEST);
 		add(isSame, WEST);
 		add(isAligned, WEST);
-		isAligned.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (isAligned.isSelected()) {
-					UpSorted.setVisible(true);
-				} else {
-					UpSorted.setVisible(false);
-				}
+		isAligned.addActionListener((e) -> {
+			if (isAligned.isSelected()) {
+				UpSorted.setVisible(true);
+			} else {
+				UpSorted.setVisible(false);
 			}
 		});
+
 		add(UpSorted, WEST);
 		UpSorted.setVisible(false);
 		add(new JButton("Подготовить"), WEST);
@@ -129,6 +119,7 @@ public class Main extends GraphicsProgram {
 		addActionListeners();
 	}
 
+	@Override
 	public void run() {
 		/*
 		 * Третяя по порядку вызова функция. Вызывается как правило после
@@ -148,7 +139,7 @@ public class Main extends GraphicsProgram {
 			public void run() {
 				redrawG();
 			}
-		}, (long) 10, (long) 10);
+		}, 10, 10);
 		/*
 		 * Запускаем таймер, который каждые 500 милисекунд (0.5 секунд) будет
 		 * перерисовывать изображения на холсте. За это отвечает фунция
@@ -202,7 +193,7 @@ public class Main extends GraphicsProgram {
 		}
 	}
 
-	public synchronized void redrawG() {
+	public static synchronized void redrawG() {
 		/*
 		 * redrawG() - Функция перерисовки графики
 		 */
@@ -218,6 +209,7 @@ public class Main extends GraphicsProgram {
 		}
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		/*
 		 * actionPerformed - функция, которая запускается при возниновении
@@ -256,7 +248,15 @@ public class Main extends GraphicsProgram {
 		}
 	}
 
-	public synchronized void stopThreads() {
+	public static void pause(final long time) {
+		try {
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public synchronized static void stopThreads() {
 		/*
 		 * Функция stopThreads просто переключает переменную stopAll в true
 		 * Внутри каждого из бегущих процессов происходит проверка, является ли
@@ -265,7 +265,6 @@ public class Main extends GraphicsProgram {
 		stopAll = true;
 	}
 
-	@SuppressWarnings("deprecation")
 	public void process() {
 		/*
 		 * process - одна из основных функций в этой программе. Эта функция
@@ -281,8 +280,12 @@ public class Main extends GraphicsProgram {
 		 * На всякий случай останавливаем потоки
 		 */
 		if (Threads.size() > 0) {
-			for (int i = 0; i < Threads.size(); i++)
-				Threads.get(i).suspend();
+			for (Thread t : Threads)
+				try {
+					t.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 		}
 		Threads.clear();
 		/*
@@ -334,9 +337,9 @@ public class Main extends GraphicsProgram {
 			/*
 			 * Если ни один элемент не выбран, то
 			 */
-			JOptionPane.showMessageDialog(null,
-					"Выберите хотя бы один вид сортировки", "Ошибка",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane
+					.showMessageDialog(null, "Выберите хотя бы один вид сортировки", "Ошибка",
+							JOptionPane.ERROR_MESSAGE);
 			/*
 			 * Показываем сообщение о том, что нужно выбрать хотя бы один вид
 			 * сортировки
@@ -356,7 +359,7 @@ public class Main extends GraphicsProgram {
 				 * Если остаток от деления i на количество сортировок равно
 				 * нулю, то
 				 */
-				Threads.add(new Thread(new BubbleSort(this, vecs.get(i))));
+				Threads.add(new Thread(new BubbleSort(vecs.get(i))));
 				/*
 				 * Создаем новый поток сортировкой пузырьком.
 				 */
@@ -364,20 +367,20 @@ public class Main extends GraphicsProgram {
 				/*
 				 * Если еденице, то Selection сорт.
 				 */
-				Threads.add(new Thread(new SelectionSort(this, vecs.get(i))));
+				Threads.add(new Thread(new SelectionSort(vecs.get(i))));
 			} else if (SelectedSorts[i % SelectedSorts.length] == 2) {
 				/*
 				 * Если двойке - Merge сорт.
 				 */
-				Threads.add(new Thread(new MergeSort(this, vecs.get(i))));
+				Threads.add(new Thread(new MergeSort(vecs.get(i))));
 			} else if (SelectedSorts[i % SelectedSorts.length] == 3) {
-				Threads.add(new Thread(new ShellSort(this, vecs.get(i))));
+				Threads.add(new Thread(new ShellSort(vecs.get(i))));
 			} else if (SelectedSorts[i % SelectedSorts.length] == 4) {
-				Threads.add(new Thread(new InsertionSort(this, vecs.get(i))));
+				Threads.add(new Thread(new InsertionSort(vecs.get(i))));
 			}
 		}
-		for (int i = 0; i < Threads.size(); i++) {
-			Threads.get(i).start();
+		for (Thread t : Threads) {
+			t.start();
 			/*
 			 * Запускаем каждый из созданных потоков
 			 */
@@ -425,7 +428,7 @@ public class Main extends GraphicsProgram {
 				vecs.add(new VecaRect(this));
 			}
 		}
-		Vector<Integer> Numbers = new Vector<Integer>();
+		Vector<Integer> Numbers = new Vector<>();
 		/*
 		 * Создаем новый вектор из целых чисел Numbers
 		 */
@@ -471,8 +474,7 @@ public class Main extends GraphicsProgram {
 				 * То же самое, только числа рандомные
 				 */
 				for (int i = 0; i < ArrSize.getValue(); i++) {
-					Numbers.add((int) ((double) Math.random() * (double) ArrSize
-							.getValue()));
+					Numbers.add((int) (Math.random() * ArrSize.getValue()));
 				}
 			}
 		}
@@ -490,8 +492,7 @@ public class Main extends GraphicsProgram {
 				/*
 				 * Иначе передаем всё в руки функции initArray каждого элемента
 				 */
-				vecs.get(i).initArray(ArrSize.getValue(),
-						isAligned.isSelected(), UpSorted.isSelected());
+				vecs.get(i).initArray(ArrSize.getValue(), isAligned.isSelected(), UpSorted.isSelected());
 			}
 			/*
 			 * Снимаем графическое выделение с каждого элемента
@@ -514,12 +515,11 @@ public class Main extends GraphicsProgram {
 	// Поле количество массивов
 	public static JScrollBar PAUSETIME = new JScrollBar(0, 0, 0, 0, 1000);
 	// Поле времения задержки
-	public static String[] data = { "Пузырек", "Выборка", "Слияние", "Шелл",
-			"Вставками" };
-	public static JList myList = new JList(data);
+	public static String[] data = { "Пузырек", "Выборка", "Слияние", "Шелл", "Вставками" };
+	public static JList<String> myList = new JList<>(data);
 	// Список сортировок
-	public static Vector<VecaRect> vecs = new Vector<VecaRect>();
+	public static Vector<VecaRect> vecs = new Vector<>();
 	// вектор из элементов класса VecaRect
-	public static Vector<Thread> Threads = new Vector<Thread>();
+	public static Vector<Thread> Threads = new Vector<>();
 	// вектор из потоков
 }

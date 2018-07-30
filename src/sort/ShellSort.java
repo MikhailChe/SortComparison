@@ -2,18 +2,13 @@
 
 import java.util.Vector;
 
-public class ShellSort extends BubbleSort {
+public class ShellSort extends AbstractSort {
 
-	public ShellSort(Main themain) {
-		super(themain);
-		// TODO Auto-generated constructor stub
+	public ShellSort(VecaRect vect) {
+		super(vect);
 	}
 
-	public ShellSort(Main themain, VecaRect vect) {
-		super(themain, vect);
-		// TODO Auto-generated constructor stub
-	}
-
+	@Override
 	public synchronized void Sort(Vector<Integer> vect) {
 		int inc = Math.round(vect.size() / 2);
 		while (inc > 0) {
@@ -28,13 +23,13 @@ public class ShellSort extends BubbleSort {
 				while (j >= inc && vect.get(j - inc) > temp) {
 					veca.DeselectAll();
 					if (Main.stopAll == true) {
-							return;
+						return;
 					}
 					veca.SelectElement(i);
 					veca.SelectElement(j);
-					veca.SelectElement(j-inc);
-					main.pause(Main.PAUSETIME.getValue());
-					Swap(vect, j, j-inc);
+					veca.SelectElement(j - inc);
+					Main.pause(Main.PAUSETIME.getValue());
+					Swap(vect, j, j - inc);
 					j = j - inc;
 				}
 			}
@@ -42,7 +37,8 @@ public class ShellSort extends BubbleSort {
 		}
 	}
 
+	@Override
 	public synchronized void SetName() {
-		veca.setName("—ортировка Ўелла");
+		veca.setName("Cортировка Шелла");
 	}
 }

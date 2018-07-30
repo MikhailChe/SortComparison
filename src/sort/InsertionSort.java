@@ -2,22 +2,14 @@
 
 import java.util.Vector;
 
-public class InsertionSort extends BubbleSort {
+public class InsertionSort extends AbstractSort {
 
-	public InsertionSort(Main themain) {
-		super(themain);
+	public InsertionSort(VecaRect vect) {
+		super(vect);
 		// TODO Auto-generated constructor stub
 	}
 
-	public InsertionSort(Main themain, VecaRect vect) {
-		super(themain, vect);
-		// TODO Auto-generated constructor stub
-	}
-
-	public synchronized void SetName() {
-		veca.setName("Сортировка вставками");
-	}
-
+	@Override
 	public synchronized void Sort(Vector<Integer> vect) {
 		int i, j;
 		for (i = 1; i < vect.size(); i++) {
@@ -30,13 +22,13 @@ public class InsertionSort extends BubbleSort {
 				return;
 			}
 			veca.SelectElement(i);
-			main.pause(Main.PAUSETIME.getValue());
+			Main.pause(Main.PAUSETIME.getValue());
 			j = i;
 			while (j > 0 && vect.get(j - 1) > vect.get(j)) {
 				veca.SelectElement(i);
 				veca.SelectElement(j);
 				veca.SelectElement(j - 1);
-				main.pause(Main.PAUSETIME.getValue());
+				Main.pause(Main.PAUSETIME.getValue());
 				Swap(vect, j, j - 1);
 				veca.DeselectAll();
 				if (Main.stopAll == true) {
@@ -49,5 +41,10 @@ public class InsertionSort extends BubbleSort {
 				j--;
 			}
 		}
+	}
+
+	@Override
+	public synchronized void SetName() {
+		veca.setName("Сортировка вставками");
 	}
 }
